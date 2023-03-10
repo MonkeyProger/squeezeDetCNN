@@ -10,15 +10,15 @@ import os
 import sys
 
 import joblib
-from utils import util
+from src.utils import util
 from easydict import EasyDict as edict
 import numpy as np
 import tensorflow as tf
-from nn_skeleton import ModelSkeleton
+from src.nn_skeleton import ModelSkeleton
 
 class SqueezeDet(ModelSkeleton):
   def __init__(self, mc, gpu_id=0):
-    with tf.device('/gpu:{}'.format(gpu_id)):
+    with tf.compat.v1.device('/gpu:{}'.format(gpu_id)):
       ModelSkeleton.__init__(self, mc)
 
       self._add_forward_graph()
@@ -32,7 +32,7 @@ class SqueezeDet(ModelSkeleton):
 
     mc = self.mc
     if mc.LOAD_PRETRAINED_MODEL:
-      assert tf.gfile.Exists(mc.PRETRAINED_MODEL_PATH), \
+      assert tf.compat.v1.gfile.Exists(mc.PRETRAINED_MODEL_PATH), \
           'Cannot find pretrained model at the given path:' \
           '  {}'.format(mc.PRETRAINED_MODEL_PATH)
       self.caffemodel_weight = joblib.load(mc.PRETRAINED_MODEL_PATH)
@@ -71,7 +71,7 @@ class SqueezeDet(ModelSkeleton):
         'fire10', fire9, s1x1=96, e1x1=384, e3x3=384, freeze=False)
     fire11 = self._fire_layer(
         'fire11', fire10, s1x1=96, e1x1=384, e3x3=384, freeze=False)
-    dropout11 = tf.nn.dropout(fire11, self.keep_prob, name='drop11')
+    dropout11 = tf.compat.v1.nn.dropout(fire11, self.keep_prob, name='drop11')
 
     num_output = mc.ANCHOR_PER_GRID * (mc.CLASSES + 1 + 4)
     self.preds = self._conv_layer(
@@ -103,4 +103,4 @@ class SqueezeDet(ModelSkeleton):
         layer_name+'/expand3x3', sq1x1, filters=e3x3, size=3, stride=1,
         padding='SAME', stddev=stddev, freeze=freeze)
 
-    return tf.concat([ex1x1, ex3x3], 3, name=layer_name+'/concat')
+    return tf.compat.v1.concat([ex1x1, ex3x3], 3, name=layer_name+'/concat')

@@ -24,20 +24,20 @@ from config import *
 from train import _draw_box
 from nets import *
 
-FLAGS = tf.app.flags.FLAGS
+FLAGS = tf.compat.v1.flags.FLAGS
 
-tf.app.flags.DEFINE_string(
+tf.compat.v1.flags.DEFINE_string(
     'mode', 'image', """'image' or 'video'.""")
-tf.app.flags.DEFINE_string(
-    'checkpoint', './data/model_checkpoints/squeezeDet/model.ckpt-87000',
+tf.compat.v1.flags.DEFINE_string(
+    'checkpoint', 'C:/data/model_checkpoints/squeezeDet/model.ckpt-87000',
     """Path to the model parameter file.""")
-tf.app.flags.DEFINE_string(
-    'input_path', './data/sample.png',
+tf.compat.v1.flags.DEFINE_string(
+    'input_path', 'C:/data/sample.png',
     """Input image or video to be detected. Can process glob input such as """
-    """./data/00000*.png.""")
-tf.app.flags.DEFINE_string(
-    'out_dir', './data/out/', """Directory to dump output image or video.""")
-tf.app.flags.DEFINE_string(
+    """C:/data/00000*.png.""")
+tf.compat.v1.flags.DEFINE_string(
+    'out_dir', 'C:/data/out/', """Directory to dump output image or video.""")
+tf.compat.v1.flags.DEFINE_string(
     'demo_net', 'squeezeDet', """Neural net architecture.""")
 
 
@@ -58,7 +58,7 @@ def video_demo():
   assert FLAGS.demo_net == 'squeezeDet' or FLAGS.demo_net == 'squeezeDet+', \
       'Selected nueral net architecture not supported: {}'.format(FLAGS.demo_net)
 
-  with tf.Graph().as_default():
+  with tf.compat.v1.Graph().as_default():
     # Load model
     if FLAGS.demo_net == 'squeezeDet':
       mc = kitti_squeezeDet_config()
@@ -72,9 +72,9 @@ def video_demo():
       mc.LOAD_PRETRAINED_MODEL = False
       model = SqueezeDetPlus(mc, FLAGS.gpu)
 
-    saver = tf.train.Saver(model.model_params)
+    saver = tf.compat.v1.train.Saver(model.model_params)
 
-    with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as sess:
+    with tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True)) as sess:
       saver.restore(sess, FLAGS.checkpoint)
 
       times = {}
@@ -178,9 +178,9 @@ def image_demo():
       mc.LOAD_PRETRAINED_MODEL = False
       model = SqueezeDetPlus(mc, FLAGS.gpu)
 
-    saver = tf.train.Saver(model.model_params)
+    saver = tf.compat.v1.train.Saver(model.model_params)
 
-    with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as sess:
+    with tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(allow_soft_placement=True)) as sess:
       saver.restore(sess, FLAGS.checkpoint)
 
       for f in glob.iglob(FLAGS.input_path):
@@ -226,12 +226,12 @@ def image_demo():
 
 
 def main(argv=None):
-  if not tf.gfile.Exists(FLAGS.out_dir):
-    tf.gfile.MakeDirs(FLAGS.out_dir)
+  if not tf.compat.v1.gfile.Exists(FLAGS.out_dir):
+    tf.compat.v1.gfile.MakeDirs(FLAGS.out_dir)
   if FLAGS.mode == 'image':
     image_demo()
   else:
     video_demo()
 
 if __name__ == '__main__':
-    tf.app.run()
+    tf.compat.v1.app.run()

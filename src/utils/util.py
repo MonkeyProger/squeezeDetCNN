@@ -168,7 +168,7 @@ def bbox_transform(bbox):
   """convert a bbox of form [cx, cy, w, h] to [xmin, ymin, xmax, ymax]. Works
   for numpy array or list of tensors.
   """
-  with tf.variable_scope('bbox_transform') as scope:
+  with tf.compat.v1.variable_scope('bbox_transform') as scope:
     cx, cy, w, h = bbox
     out_box = [[]]*4
     out_box[0] = cx-w/2
@@ -182,7 +182,7 @@ def bbox_transform_inv(bbox):
   """convert a bbox of form [xmin, ymin, xmax, ymax] to [cx, cy, w, h]. Works
   for numpy array or list of tensors.
   """
-  with tf.variable_scope('bbox_transform_inv') as scope:
+  with tf.compat.v1.variable_scope('bbox_transform_inv') as scope:
     xmin, ymin, xmax, ymax = bbox
     out_box = [[]]*4
 
@@ -220,12 +220,12 @@ def safe_exp(w, thresh):
   """Safe exponential function for tensors."""
 
   slope = np.exp(thresh)
-  with tf.variable_scope('safe_exponential'):
+  with tf.compat.v1.variable_scope('safe_exponential'):
     lin_bool = w > thresh
-    lin_region = tf.to_float(lin_bool)
+    lin_region = tf.compat.v1.to_float(lin_bool)
 
     lin_out = slope*(w - thresh + 1.)
-    exp_out = tf.exp(tf.where(lin_bool, tf.zeros_like(w), w))
+    exp_out = tf.compat.v1.exp(tf.compat.v1.where(lin_bool, tf.compat.v1.zeros_like(w), w))
 
     out = lin_region*lin_out + (1.-lin_region)*exp_out
   return out

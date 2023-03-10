@@ -22,30 +22,30 @@ from dataset import pascal_voc, kitti
 from utils.util import sparse_to_dense, bgr_to_rgb, bbox_transform
 from nets import *
 
-FLAGS = tf.app.flags.FLAGS
+FLAGS = tf.compat.v1.flags.FLAGS
 
-tf.app.flags.DEFINE_string('dataset', 'KITTI',
+tf.compat.v1.flags.DEFINE_string('dataset', 'KITTI',
                            """Currently only support KITTI dataset.""")
-tf.app.flags.DEFINE_string('data_path', '', """Root directory of data""")
-tf.app.flags.DEFINE_string('image_set', 'train',
+tf.compat.v1.flags.DEFINE_string('data_path', '', """Root directory of data""")
+tf.compat.v1.flags.DEFINE_string('image_set', 'train',
                            """ Can be train, trainval, val, or test""")
-tf.app.flags.DEFINE_string('year', '2007',
+tf.compat.v1.flags.DEFINE_string('year', '2007',
                             """VOC challenge year. 2007 or 2012"""
                             """Only used for Pascal VOC dataset""")
-tf.app.flags.DEFINE_string('train_dir', '/tmp/bichen/logs/squeezeDet/train',
+tf.compat.v1.flags.DEFINE_string('train_dir', '/tmp/bichen/logs/squeezeDet/train',
                             """Directory where to write event logs """
                             """and checkpoint.""")
-tf.app.flags.DEFINE_integer('max_steps', 1000000,
+tf.compat.v1.flags.DEFINE_integer('max_steps', 1000000,
                             """Maximum number of batches to run.""")
-tf.app.flags.DEFINE_string('net', 'squeezeDet',
+tf.compat.v1.flags.DEFINE_string('net', 'squeezeDet',
                            """Neural net architecture. """)
-tf.app.flags.DEFINE_string('pretrained_model_path', '',
+tf.compat.v1.flags.DEFINE_string('pretrained_model_path', '',
                            """Path to the pretrained model.""")
-tf.app.flags.DEFINE_integer('summary_step', 10,
+tf.compat.v1.flags.DEFINE_integer('summary_step', 10,
                             """Number of steps to save summary.""")
-tf.app.flags.DEFINE_integer('checkpoint_step', 1000,
+tf.compat.v1.flags.DEFINE_integer('checkpoint_step', 1000,
                             """Number of steps to save summary.""")
-tf.app.flags.DEFINE_string('gpu', '0', """gpu id.""")
+tf.compat.v1.flags.DEFINE_string('gpu', '0', """gpu id.""")
 
 
 def _draw_box(im, box_list, label_list, color=(0,255,0), cdict=None, form='center'):
@@ -232,7 +232,7 @@ def train():
             print ("added to the queue")
         if mc.DEBUG_MODE:
           print ("Finished enqueue")
-      except Exception, e:
+      except Exception as e:
         coord.request_stop(e)
 
     sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True))
